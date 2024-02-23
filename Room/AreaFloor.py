@@ -11,18 +11,23 @@ class AreaFloor():
 
 
     def dirtyArea(self,posX,posY):
-        if(posX <= self.maxX and posY <= self.maxY):
+        if(posY <= self.maxX and posX <= self.maxY):
             self.matriz[posX][posY] = "d"
         else:
             print("Posicion no valida")
 
     def cleanArea(self,posX,posY):
         self.matriz[posX][posY] = "-"
-    def seeRobot(self,posX,posY):
-        self.matriz[posX][posY] = "R"
 
-    def moveRobot(self,posX,posY):
-        self.matriz[posX][posY] = "-"
+    def seeRobot(self,posX,posY,name):
+        if(name =="*R*"):
+            print("Limpiando!")
+        self.matriz[posX][posY] = name
+
+    def moveRobot(self,robot):
+        posX = robot.getPosX()
+        posY = robot.getPosY()
+        self.matriz[posX][posY] = robot.getMemory()
 
     def getCondition(self,posX,posY):
         return self.matriz[posX][posY]

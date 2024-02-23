@@ -10,29 +10,25 @@ class RobotController(threading.Thread):
         self.room = room
 
 
-    def cleanController(self,all):
+    def cleanController(self):
         cleanX = self.room.getFloorX()
         cleanY = self.room.getFlootY()
-        size = cleanX*cleanY
-        accumulatedY = 0
-        accumulatedX = 0
-        for i in range(cleanX):
-            for j in range(cleanY):
+        for i in range(cleanY):
+            for j in range(cleanX):
                 condition = self.room.areaFloor.getCondition(i,j)
-                self.moveControler(i, j)
-                if(all):
-                    self.robot.clean()
-                    self.room.areaFloor.cleanArea(i,j)
-                else:
-                    ne = self.robot.scan(condition)
-                    if ne == "d":
-                        self.room.areaFloor.cleanArea(i, j)
-
+                self.moveControler(i,j)
+                condition = self.cleanControler(condition)
+                self.robot.setMemory(condition)
+        self.room.areaFloor.moveRobot(self.robot)
+        if(self.room.areaFloor.getCondition(0,0)=="d"):
+            self.room.areaFloor.dirtyArea(0,0)
+        else:
+            self.moveControler(0,0)
+    def cleanControler(self,condition):
+        return self.robot.scan(condition)
     def moveControler(self,posX,posY):
-        afterX = self.robot.getPosX()
-        afterY = self.robot.getPosY()
-        self.room.areaFloor.moveRobot(afterX,afterY)
-        self.room.areaFloor.seeRobot(posX,posY)
+        self.room.areaFloor.moveRobot(self.robot)
+        self.room.areaFloor.seeRobot(posX,posY,"R")
         self.robot.move(posX,posY)
 
 
@@ -63,7 +59,7 @@ class RobotController(threading.Thread):
 
     def run(self):
         while True:
-            self.cleanController(True)
-            time.sleep(5)
-            self.cleanController(False)
+            print("Iniciando ronda")
+            self.cleanController()
+            print("Descansando")
             time.sleep(10)
